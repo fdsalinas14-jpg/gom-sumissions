@@ -51,7 +51,7 @@ const fr = {
   sentTo: (ch) => `Envoyé par ${ch}.`, done: 'C’est fait.', locked: 'Cette soumission est acceptée ou payée: seul l’administrateur peut la modifier.',
   warn_opportunity: 'L’opportunité n’a pas été mise à jour dans GoHighLevel.', warn_tags: 'Les étiquettes n’ont pas été ajoutées dans GoHighLevel.',
   warn_note: 'La note n’a pas été ajoutée dans GoHighLevel.', warn_no_email: 'Pas de courriel pour ce client.', warn_no_phone: 'Pas de téléphone pour ce client.',
-  warn_email_failed: 'Le courriel n’est pas parti.', warn_pdf_attach_failed: 'Courriel envoyé sans le PDF en pièce jointe (le lien vers la soumission y est).', warn_sms_failed: 'Le texto n’est pas parti.', warn_send_failed: 'Enregistrée, mais pas envoyée. Vérifiez le courriel et le téléphone du client.',
+  warn_email_failed: 'Le courriel n’est pas parti.', warn_dnd_email: 'Courriel bloqué: le client est en « Ne pas déranger » (DND) dans GoHighLevel.', warn_dnd_sms: 'Texto bloqué: le client est en « Ne pas déranger » (DND) dans GoHighLevel.', warn_pdf_attach_failed: 'Courriel envoyé sans le PDF en pièce jointe (le lien vers la soumission y est).', warn_sms_failed: 'Le texto n’est pas parti.', warn_send_failed: 'Enregistrée, mais pas envoyée. Vérifiez le courriel et le téléphone du client.',
   warn_no_contact: 'Client sans fiche GoHighLevel.', warn_no_review_link: 'Ajoutez le lien d’avis dans les Réglages.',
 
   // Avis
@@ -181,7 +181,7 @@ const en = {
   sentTo: (ch) => `Sent by ${ch}.`, done: 'Done.', locked: 'This quote is accepted or paid: only the administrator can change it.',
   warn_opportunity: 'The opportunity was not updated in GoHighLevel.', warn_tags: 'The tags were not added in GoHighLevel.',
   warn_note: 'The note was not added in GoHighLevel.', warn_no_email: 'No email for this client.', warn_no_phone: 'No phone for this client.',
-  warn_email_failed: 'The email was not sent.', warn_pdf_attach_failed: 'Email sent without the PDF attached (the link to the quote is in it).', warn_sms_failed: 'The text was not sent.', warn_send_failed: 'Saved, but not sent. Check the client’s email and phone.',
+  warn_email_failed: 'The email was not sent.', warn_dnd_email: 'Email blocked: the client is on “Do Not Disturb” (DND) in GoHighLevel.', warn_dnd_sms: 'Text blocked: the client is on “Do Not Disturb” (DND) in GoHighLevel.', warn_pdf_attach_failed: 'Email sent without the PDF attached (the link to the quote is in it).', warn_sms_failed: 'The text was not sent.', warn_send_failed: 'Saved, but not sent. Check the client’s email and phone.',
   warn_no_contact: 'Client has no GoHighLevel record.', warn_no_review_link: 'Add the review link in Settings.',
 
   reviews: 'Review follow-up', reviewsHelp: 'Paid jobs without a received review. Call the client: “I sent you a review form — did you receive it?”',

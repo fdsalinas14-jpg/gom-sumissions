@@ -408,6 +408,15 @@ await t('rappel: si GHL no acepta el PDF, el correo sale igual (sin adjunto) y a
     assert.equal(email.body.attachments, undefined);
   } finally { mock.setFailUpload(false); }
 });
+await t('cliente en « Ne pas déranger » (DND): no se envía y el mensaje lo dice', async () => {
+  const { maxi } = ids();
+  const c = await marie.api('POST', '/api/estimates', { contact: { ...contact, id: 'cont_dnd' }, items: [{ type: 'product', productId: maxi.id, qty: 1, base: 9000 }] });
+  assert.equal(c.status, 200, JSON.stringify(c.data));
+  const r = await marie.api('POST', `/api/estimates?id=${c.data.estimate.id}&action=send`, { channels: ['email', 'sms'] });
+  assert.equal(r.status, 400);
+  assert.match(r.data.error, /Ne pas déranger/);
+  await marie.api('POST', `/api/estimates?id=${c.data.estimate.id}&action=delete`);
+});
 await t('rappel, aceptada (pipeline Installation), pagada (ganada) — y transiciones inválidas', async () => {
   assert.equal((await marie.api('POST', `/api/estimates?id=${est.id}&action=pay`)).status, 200);
   await nico.api('POST', `/api/estimates?id=${est.id}&action=set_status`, { status: 'sent' });

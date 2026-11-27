@@ -155,6 +155,7 @@ export function startMockGhl({ failSend = false, failOpp = false } = {}) {
     }
     if (m === 'POST' && p === '/conversations/messages') {
       if (failSend) return send(422, { message: 'sender not verified' });
+      if (body.contactId === 'cont_dnd') return send(400, { message: 'Cannot send message as DND is active', canonicalCode: 'CONVERSATIONS_MSG_DND_ACTIVE' });
       if (!body.contactId || !['Email', 'SMS'].includes(body.type)) return send(422, { message: ['type/contactId'] });
       if (body.type === 'Email' && (!body.subject || !body.html)) return send(422, { message: ['subject/html'] });
       if (body.type === 'SMS' && !body.message) return send(422, { message: ['message'] });
