@@ -89,7 +89,13 @@ function navBar(active) {
 /* ================= Entrada ================= */
 function viewLogin(msg) {
   const user = input({ autocomplete: 'username', autocapitalize: 'none', spellcheck: false, value: store.get('ec_last_user') || '' });
-  const pass = input({ type: 'password', autocomplete: 'current-password' });
+  const pass = input({ id: 'login-pass', type: 'password', autocomplete: 'current-password', autocapitalize: 'none', autocorrect: 'off', spellcheck: false });
+  // Ver la clave: en el teléfono ayuda a confirmar lo que se escribió (mayúsculas, símbolos)
+  const eye = h('button', {
+    type: 'button', class: 'pw-eye', 'aria-pressed': 'false',
+    onclick: () => { const on = pass.type === 'password'; pass.type = on ? 'text' : 'password'; eye.textContent = t(on ? 'hidePw' : 'showPw'); eye.setAttribute('aria-pressed', String(on)); },
+  }, t('showPw'));
+  const passWrap = h('div', { class: 'pw-wrap' }, pass, eye);
   const err = h('div', {}, msg ? alertBox(msg, 'info') : null);
   const btn = h('button', { class: 'btn big hi', type: 'submit' }, t('signIn'));
   const form = h('form', {
@@ -112,7 +118,7 @@ function viewLogin(msg) {
   h('div', { class: 'brand-lg' }, h('img', { src: '/logo-gom.png', alt: 'Climatisation G.O.M.' })),
   h('h1', {}, 'Soumissions'),
   h('p', { class: 'lead' }, t('loginHint')),
-  field(t('user'), user), field(t('password'), pass), err, btn,
+  field(t('user'), user), h('div', { class: 'fld' }, h('label', { class: 'f', for: 'login-pass' }, t('password')), passWrap), err, btn,
   h('div', { class: 'login-lang' }, ['fr', 'en'].map((code) => h('button', {
     class: S.lang === code ? 'seg on' : 'seg', type: 'button',
     onclick: () => { S.lang = code; store.set('ec_lang', code); document.documentElement.lang = code; render(); },

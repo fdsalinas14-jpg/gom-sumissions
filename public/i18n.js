@@ -8,7 +8,7 @@ const fr = {
 
   // Login y cuenta
   loginHint: 'Entrez votre nom et votre mot de passe.', user: 'Votre nom', password: 'Mot de passe', signIn: 'Entrer',
-  badLogin: 'Le nom ou le mot de passe n’est pas bon. Réessayez.', account: 'Mon compte', currentPw: 'Mot de passe actuel',
+  badLogin: 'Le nom ou le mot de passe n’est pas bon. Réessayez.', showPw: 'Afficher', hidePw: 'Masquer', account: 'Mon compte', currentPw: 'Mot de passe actuel',
   newPw: 'Nouveau mot de passe (8 caractères ou plus)', changePw: 'Changer mon mot de passe', pwChanged: 'Mot de passe changé.',
 
   // Navegación
@@ -143,7 +143,7 @@ const en = {
   showMore: 'Show more', none: 'None', optional: '(optional)', by: (n) => `By ${n}`,
 
   loginHint: 'Enter your name and password.', user: 'Your name', password: 'Password', signIn: 'Enter',
-  badLogin: 'Wrong name or password. Try again.', account: 'My account', currentPw: 'Current password',
+  badLogin: 'Wrong name or password. Try again.', showPw: 'Show', hidePw: 'Hide', account: 'My account', currentPw: 'Current password',
   newPw: 'New password (8 characters or more)', changePw: 'Change my password', pwChanged: 'Password changed.',
 
   navQuotes: 'Quotes', navReviews: 'Reviews', navCatalog: 'Catalog', navMore: 'More', navHistory: 'History',
