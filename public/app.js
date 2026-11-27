@@ -63,7 +63,7 @@ function topBar() {
     onclick: () => { S.lang = code; store.set('ec_lang', code); document.documentElement.lang = code; render(); },
   }, label);
   return h('header', { class: 'top' },
-    h('a', { class: 'brand', href: '#/home' }, 'GOM'),
+    h('a', { class: 'brand', href: '#/home', 'aria-label': 'Climatisation GOM' }, h('img', { src: '/logo-gom.png', alt: 'Climatisation G.O.M.' })),
     h('div', { class: 'top-tools' },
       h('span', { class: 'who' }, S.user.display),
       langBtn('fr', 'FR'), langBtn('en', 'EN'),
@@ -109,7 +109,7 @@ function viewLogin(msg) {
       }
     },
   },
-  h('div', { class: 'brand-lg' }, 'Climatisation GOM'),
+  h('div', { class: 'brand-lg' }, h('img', { src: '/logo-gom.png', alt: 'Climatisation G.O.M.' })),
   h('h1', {}, 'Soumissions'),
   h('p', { class: 'lead' }, t('loginHint')),
   field(t('user'), user), field(t('password'), pass), err, btn,
