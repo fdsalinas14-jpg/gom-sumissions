@@ -383,6 +383,11 @@ await t('enviar: correo + SMS por GHL con enlace al PDF, oportunidad en "Soumiss
   assert.equal(email.body.contactId, 'cont_abc123');
   assert.match(email.body.subject, /SOU-1001/);
   assert.match(email.body.html, /https:\/\/app\.test\/signer\?id=\d+&amp;k=/); // página para ver y firmar
+  const up = mock.calls.find((x) => x.path === '/conversations/messages/upload');
+  assert.ok(up && up.body.isPdf && up.body.contactId === 'cont_abc123', 'el PDF se sube a GHL');
+  assert.equal(up.body.filename, 'SOU-1001.pdf');
+  assert.deepEqual(email.body.attachments, ['https://files.test/SOU-1001.pdf'], 'el correo lleva el PDF adjunto');
+  assert.equal(msgs.find((x) => x.body.type === 'SMS').body.attachments, undefined, 'el SMS no lleva adjunto');
   assert.match(msgs.find((x) => x.body.type === 'SMS').body.message, /SOU-1001.*https:\/\/app\.test/);
   const opp = mock.calls.find((x) => x.path === '/opportunities/');
   assert.equal(opp.body.pipelineStageId, '78dd0289-e3b8-4d27-a732-8034f71ea258', 'GOM: « Soumission Sent »');
@@ -390,6 +395,18 @@ await t('enviar: correo + SMS por GHL con enlace al PDF, oportunidad en "Soumiss
   assert.equal(opp.body.assignedTo, 'ghl_marie');
   assert.deepEqual(mock.calls.find((x) => x.path.endsWith('/tags')).body.tags, ['soumission-envoyee']);
   assert.match(mock.calls.find((x) => x.path.endsWith('/notes')).body.body, /SOU-1001 envoyée/);
+});
+await t('rappel: si GHL no acepta el PDF, el correo sale igual (sin adjunto) y avisa', async () => {
+  mock.calls.length = 0;
+  mock.setFailUpload(true);
+  try {
+    const r = await marie.api('POST', `/api/estimates?id=${est.id}&action=remind`, { channels: ['email'] });
+    assert.equal(r.status, 200, JSON.stringify(r.data));
+    assert.deepEqual(r.data.sent, ['email']);
+    assert.ok(r.data.warnings.includes('pdf_attach_failed'));
+    const email = mock.calls.find((x) => x.path === '/conversations/messages' && x.body.type === 'Email');
+    assert.equal(email.body.attachments, undefined);
+  } finally { mock.setFailUpload(false); }
 });
 await t('rappel, aceptada (pipeline Installation), pagada (ganada) — y transiciones inválidas', async () => {
   assert.equal((await marie.api('POST', `/api/estimates?id=${est.id}&action=pay`)).status, 200);

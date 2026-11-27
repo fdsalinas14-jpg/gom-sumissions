@@ -65,6 +65,7 @@ export const ghlTotal = (items) => {
 };
 
 export function startMockGhl({ failSend = false, failOpp = false } = {}) {
+  let failUpload = false;
   const calls = [];
   const estimates = [];
   // MOCK_TEMPLATES=archivo.json: usar una copia de las plantillas reales (pruebas de navegador)
@@ -76,8 +77,9 @@ export function startMockGhl({ failSend = false, failOpp = false } = {}) {
   const server = http.createServer(async (req, res) => {
     const chunks = [];
     for await (const c of req) chunks.push(c);
-    const raw = Buffer.concat(chunks).toString();
-    const body = raw ? JSON.parse(raw) : undefined;
+    const multipart = String(req.headers['content-type'] || '').startsWith('multipart/form-data');
+    const raw = Buffer.concat(chunks).toString(multipart ? 'latin1' : 'utf8');
+    const body = multipart ? { multipart: true, filename: (raw.match(/filename="([^"]+)"/) || [])[1], isPdf: raw.includes('%PDF-'), contactId: (raw.match(/name="contactId"\r\n\r\n([^\r]+)/) || [])[1] } : raw ? JSON.parse(raw) : undefined;
     const url = new URL(req.url, 'http://x');
     calls.push({ method: req.method, path: url.pathname, query: Object.fromEntries(url.searchParams), body, auth: req.headers.authorization, version: req.headers.version });
     const send = (code, obj) => { res.statusCode = code; res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(obj)); };
@@ -146,6 +148,11 @@ export function startMockGhl({ failSend = false, failOpp = false } = {}) {
     if (m === 'PUT' && /^\/opportunities\/[^/]+$/.test(p)) return failOpp ? send(400, { message: 'bad stage' }) : send(200, { opportunity: { id: p.split('/')[2] } });
     if (m === 'POST' && /^\/contacts\/[^/]+\/tags$/.test(p)) return send(201, { tags: body.tags });
     if (m === 'POST' && /^\/contacts\/[^/]+\/notes$/.test(p)) return send(201, { note: { id: 'note_1' } });
+    if (m === 'POST' && p === '/conversations/messages/upload') {
+      if (failUpload) return send(500, { message: 'upload failed' });
+      if (!body?.multipart || !body.isPdf || !body.contactId) return send(422, { message: ['fileAttachment/contactId'] });
+      return send(200, { uploadedFiles: { [body.filename]: `https://files.test/${body.filename}` } });
+    }
     if (m === 'POST' && p === '/conversations/messages') {
       if (failSend) return send(422, { message: 'sender not verified' });
       if (!body.contactId || !['Email', 'SMS'].includes(body.type)) return send(422, { message: ['type/contactId'] });
@@ -158,5 +165,5 @@ export function startMockGhl({ failSend = false, failOpp = false } = {}) {
   // Simula que alguien cambia algo directamente en GHL
   const touchTemplate = (id, by = 'ghl_jean') => { const t = templates.find((x) => x._id === id); Object.assign(t, { updatedAt: stamp(), updatedBy: by }); };
   const touchEstimate = (id, by = 'ghl_other') => { const e = estimates.find((x) => x._id === id); Object.assign(e, { updatedAt: stamp(), updatedBy: by }); };
-  return new Promise((resolve) => server.listen(0, () => resolve({ server, calls, estimates, templates, touchTemplate, touchEstimate, port: server.address().port })));
+  return new Promise((resolve) => server.listen(0, () => resolve({ server, calls, estimates, templates, touchTemplate, touchEstimate, setFailUpload: (v) => { failUpload = v; }, port: server.address().port })));
 }
